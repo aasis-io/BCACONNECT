@@ -17,7 +17,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    userName: "",
+    email: "",
     password: "",
   });
 
@@ -41,7 +41,7 @@ const Login = () => {
 
     try {
       const response = await axiosInstance.post("/auth/login", {
-        userName: formData.userName,
+        email: formData.email,
         password: formData.password,
       });
 
@@ -49,14 +49,14 @@ const Login = () => {
       toast.success("Login Successful");
 
       navigate("/dashboard", {
-        state: { username: formData.userName },
+        state: { email: formData.email },
       });
     } catch (error) {
       const backendError =
         error.response?.data?.error || error.response?.data?.message;
 
       if (error.response?.status === 400) {
-        toast.error(backendError || "Invalid username or password.");
+        toast.error(backendError || "Invalid email or password.");
       } else if (error.response?.status === 404) {
         toast.error(backendError || "User not found.");
       } else {
@@ -119,21 +119,21 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label
-              htmlFor="userName"
+              htmlFor="email"
               className="block text-base text-gray-800 font-medium mb-1"
             >
-              Username
+              email
             </label>
             <input
-              id="userName"
+              id="email"
               type="text"
               required
-              value={formData.userName}
+              value={formData.email}
               onChange={(e) =>
-                setFormData({ ...formData, userName: e.target.value })
+                setFormData({ ...formData, email: e.target.value })
               }
               className="w-full px-4 py-2 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-150 placeholder-gray-400"
-              placeholder="Enter your username"
+              placeholder="Enter your email"
             />
           </div>
 

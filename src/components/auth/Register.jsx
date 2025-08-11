@@ -21,7 +21,6 @@ const Register = () => {
 
   const [formData, setFormData] = useState({
     fullName: "",
-    userName: "",
     semester: "First",
     email: "",
     password: "",
@@ -69,7 +68,7 @@ const Register = () => {
             />
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm text-gray-800 font-medium mb-1">Username</label>
             <input
               type="text"
@@ -81,7 +80,7 @@ const Register = () => {
               className="w-full px-4 py-2 rounded bg-white  focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder-gray-400 transition-all duration-150"
               placeholder="Unique username"
             />
-          </div>
+          </div> */}
 
           <div>
             <label className="block text-sm text-gray-800 font-medium mb-1">Semester</label>
