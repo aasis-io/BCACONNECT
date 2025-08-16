@@ -1,30 +1,40 @@
 import {
-  BookmarkCheck,
   CircleUser,
+  FileClock,
   FilePlus2,
   LayoutDashboard,
   LogOut,
   NotebookPen,
+  Users
 } from "lucide-react";
 import { Button } from "primereact/button";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import axiosInstance from "../api/AxiosInstance"; // adjust path as needed
 
 const Sidebar = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
 
-  const navItems = [
-    { label: "Home", to: "/dashboard", icon: <LayoutDashboard /> },
-    { label: "My Notes", to: "/dashboard/notes", icon: <NotebookPen /> },
-    { label: "Add Notes", to: "/dashboard/uploads", icon: <FilePlus2 /> },
-    {
-      label: "Saved Notes",
-      to: "/dashboard/favorites",
-      icon: <BookmarkCheck />,
-    },
-    { label: "Profile", to: "/dashboard/settings", icon: <CircleUser /> },
-  ];
+  const jwt = localStorage.getItem("jwt");
+
+  useEffect(() => {
+    if (jwt) {
+      axiosInstance
+        .get("/user/me", {
+          headers: {
+            Authorization: `Bearer ${jwt}`,
+          },
+        })
+        .then((res) => {
+          setUser(res.data.data); 
+        })
+        .catch((err) => {
+          console.error("Failed to fetch user info:", err);
+        });
+    }
+  }, [jwt]);
 
   const handleLogout = () => {
     confirmDialog({
@@ -40,6 +50,33 @@ const Sidebar = () => {
       },
     });
   };
+
+  const baseNavItems = [
+    { label: "Home", to: "/dashboard", icon: <LayoutDashboard /> },
+    { label: "Notes", to: "/dashboard/notes", icon: <NotebookPen /> },
+    { label: "Add Post", to: "/dashboard/uploads", icon: <FilePlus2 /> },
+    // {
+    //   label: "Saved Notes",
+    //   to: "/dashboard/favorites",
+    //   icon: <BookmarkCheck />,
+    // },
+    { label: "Profile", to: "/dashboard/profile", icon: <CircleUser /> },
+  ];
+
+  const adminModNavItems = [
+    { label: "Users", to: "/dashboard/users", icon: <Users /> },
+    {
+      label: "Posts for Approval",
+      to: "/dashboard/approvals",
+      icon: <FileClock />,
+    },
+  ];
+
+  const navItems = [...baseNavItems];
+
+  if (user?.roles?.includes("ADMIN") || user?.roles?.includes("MOD")) {
+    navItems.push(...adminModNavItems);
+  }
 
   return (
     <aside className="h-full w-64 bg-white border-r border-gray-200 shadow-sm flex flex-col">
@@ -64,15 +101,18 @@ const Sidebar = () => {
       </div>
 
       {/* Fixed Logout Button */}
-      <div className="px-4 py-4 border-t border-gray-200">
-        <Button
-          label="Logout"
-          icon={<LogOut size={18} />}
-          onClick={handleLogout}
-          className="w-full justify-start gap-2 p-button-text text-red-600 hover:bg-red-50"
-        />
-        <ConfirmDialog />
-      </div>
+      {jwt && (
+        <div className="px-4 py-4 border-t border-gray-200">
+          <Button
+            label="Logout"
+            icon={<LogOut size={18} />}
+            onClick={handleLogout}
+            style={{ color: "#f44336", textAlign: "left" }}
+            className="w-full justify-start text-left gap-2 p-button-text text-red-600 hover:bg-red-50"
+          />
+          <ConfirmDialog />
+        </div>
+      )}
     </aside>
   );
 };

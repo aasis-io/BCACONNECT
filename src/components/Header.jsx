@@ -47,7 +47,7 @@ const Header = () => {
       {/* Right: Avatar + Name & Semester */}
       {jwt && user ? (
         <div className="flex items-center gap-2">
-          <Link to="/profile">
+          <Link to="/dashboard/profile">
             <div className="w-9 h-9 bg-gray-300 rounded-full flex items-center justify-center cursor-pointer">
               <FaUserCircle className="text-white text-xl" />
             </div>
